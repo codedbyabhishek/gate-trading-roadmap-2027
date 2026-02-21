@@ -257,6 +257,101 @@ input[type="checkbox"] {
   font-size: 0.86rem;
 }
 
+.mock-form {
+  display: grid;
+  grid-template-columns: 160px 140px 1fr 120px;
+  gap: 0.55rem;
+}
+
+.mock-form input,
+.mock-form button {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.5rem;
+}
+
+.mock-form button {
+  background: #f8fbf0;
+  cursor: pointer;
+  font-family: "IBM Plex Mono", monospace;
+}
+
+.mock-summary {
+  margin-top: 0.7rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.5rem;
+}
+
+.mock-chip {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 0.55rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.86rem;
+}
+
+.mock-list {
+  margin-top: 0.7rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.mock-row {
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 0.6rem;
+  background: #fff;
+  display: grid;
+  grid-template-columns: 140px 110px 1fr 90px;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.mock-row p {
+  margin: 0;
+}
+
+.mock-row button {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff8ed;
+  padding: 0.4rem;
+  cursor: pointer;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13px, 13px));
+  gap: 4px;
+  margin-top: 0.5rem;
+}
+
+.heat-cell {
+  width: 13px;
+  height: 13px;
+  border-radius: 3px;
+  border: 1px solid #d9e3cf;
+  background: #f0f3e5;
+}
+
+.lvl-1 {
+  background: #dbeed0;
+}
+
+.lvl-2 {
+  background: #a8dba8;
+}
+
+.lvl-3 {
+  background: #63be7b;
+}
+
+.lvl-4 {
+  background: #2f8f4f;
+}
+
 .daily-plan {
   display: grid;
   gap: 0.8rem;
@@ -327,6 +422,14 @@ footer {
   }
 
   .weightage-row {
+    grid-template-columns: 1fr;
+  }
+
+  .mock-form {
+    grid-template-columns: 1fr;
+  }
+
+  .mock-row {
     grid-template-columns: 1fr;
   }
 }

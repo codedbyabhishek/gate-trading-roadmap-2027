@@ -99,31 +99,68 @@ const SUBJECT_ROTATION = [
 
 const startDate = new Date("2026-02-21");
 const endDate = new Date("2027-01-31");
+const MOCK_STORAGE_KEY = "gate-mock-tests-v1";
 
 const rulesContainer = document.getElementById("rules");
 const dailyPlanContainer = document.getElementById("daily-plan");
 const statsContainer = document.getElementById("stats");
 const weightageTable = document.getElementById("weightage-table");
 const weeklyHoursInput = document.getElementById("weekly-hours");
+const todayFocusContainer = document.getElementById("today-focus");
+const todayFocusDate = document.getElementById("today-focus-date");
+const heatmapGrid = document.getElementById("heatmap-grid");
+const streakSummary = document.getElementById("streak-summary");
+const mockDateInput = document.getElementById("mock-date");
+const mockScoreInput = document.getElementById("mock-score");
+const mockNotesInput = document.getElementById("mock-notes");
+const mockAddBtn = document.getElementById("mock-add");
+const mockSummary = document.getElementById("mock-summary");
+const mockList = document.getElementById("mock-list");
 
 const scheduleState = {
   conceptQueueIndex: 0,
   studied: []
 };
 
+const allDayPlans = [];
+let mockTests = [];
+
 function idFor(prefix, index) {
   return `${prefix}-${index}`;
 }
 
-function makeCheckbox(id, text) {
+function dateId(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function syncCheckboxes(storageKey, checked, source) {
+  document.querySelectorAll(`input[data-storage-key='${storageKey}']`).forEach((box) => {
+    if (box !== source) {
+      box.checked = checked;
+    }
+  });
+}
+
+function notifyProgressChanged() {
+  renderStats();
+  renderHeatmap();
+  renderTodayFocusSummary();
+}
+
+function makeCheckbox(storageKey, text, domId) {
   const label = document.createElement("label");
   const input = document.createElement("input");
   input.type = "checkbox";
-  input.id = id;
-  input.checked = localStorage.getItem(id) === "1";
+  input.id = domId || storageKey;
+  input.dataset.storageKey = storageKey;
+  input.checked = localStorage.getItem(storageKey) === "1";
   input.addEventListener("change", () => {
-    localStorage.setItem(id, input.checked ? "1" : "0");
-    renderStats();
+    localStorage.setItem(storageKey, input.checked ? "1" : "0");
+    syncCheckboxes(storageKey, input.checked, input);
+    notifyProgressChanged();
   });
 
   label.appendChild(input);
@@ -265,21 +302,25 @@ function monthLabel(date) {
 }
 
 function renderStats() {
-  const allBoxes = Array.from(document.querySelectorAll("input[type='checkbox']"));
-  const total = allBoxes.length;
-  const done = allBoxes.filter((box) => box.checked).length;
+  const allTaskInputs = Array.from(document.querySelectorAll("input[data-storage-key]"))
+    .filter((box) => box.dataset.storageKey.startsWith("d") || box.dataset.storageKey.startsWith("rule"));
+  const uniqueKeys = [...new Set(allTaskInputs.map((box) => box.dataset.storageKey))];
+  const total = uniqueKeys.length;
+  const done = uniqueKeys.filter((key) => localStorage.getItem(key) === "1").length;
   const pct = total > 0 ? ((done / total) * 100).toFixed(1) : "0.0";
 
-  const today = new Date();
-  const todayKey = today.toLocaleDateString();
-  const todayBoxes = allBoxes.filter((box) => box.dataset.dateKey === todayKey);
-  const todayDone = todayBoxes.filter((box) => box.checked).length;
+  const todayId = dateId(new Date());
+  const todayPlan = allDayPlans.find((day) => day.dateId === todayId);
+  const todayTotal = todayPlan ? todayPlan.tasks.length : 0;
+  const todayDone = todayPlan
+    ? todayPlan.tasks.filter((task) => localStorage.getItem(task.storageKey) === "1").length
+    : 0;
 
   statsContainer.innerHTML = "";
   [
     { label: "Total Tasks Done", value: `${done}/${total}` },
     { label: "Overall Completion", value: `${pct}%` },
-    { label: "Today's Tasks Done", value: `${todayDone}/${todayBoxes.length || 0}` },
+    { label: "Today's Tasks Done", value: `${todayDone}/${todayTotal}` },
     { label: "Plan Range", value: "Feb 21, 2026 -> Jan 31, 2027" }
   ].forEach((item) => {
     const box = document.createElement("article");
@@ -359,6 +400,186 @@ function renderAllocator() {
   });
 }
 
+function selectTodayPlan() {
+  const today = new Date();
+  const id = dateId(today);
+  const exact = allDayPlans.find((day) => day.dateId === id);
+  if (exact) return exact;
+  if (today < startDate) return allDayPlans[0];
+  return allDayPlans[allDayPlans.length - 1];
+}
+
+function renderTodayFocus() {
+  const todayPlan = selectTodayPlan();
+  if (!todayPlan) return;
+
+  todayFocusContainer.innerHTML = "";
+  todayFocusDate.textContent = `Date: ${todayPlan.date.toLocaleDateString(undefined, {
+    weekday: "long",
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  })} | Phase: ${phaseLabel(todayPlan.phase)}`;
+
+  todayPlan.tasks.forEach((task, idx) => {
+    const box = makeCheckbox(task.storageKey, task.text, `${task.storageKey}-today-${idx}`);
+    todayFocusContainer.appendChild(box);
+  });
+
+  renderTodayFocusSummary();
+}
+
+function renderTodayFocusSummary() {
+  const todayPlan = selectTodayPlan();
+  if (!todayPlan) return;
+  const done = todayPlan.tasks.filter((task) => localStorage.getItem(task.storageKey) === "1").length;
+  const total = todayPlan.tasks.length;
+  todayFocusDate.textContent = `${todayFocusDate.textContent.split(" | Done:")[0]} | Done: ${done}/${total}`;
+}
+
+function completionRatioForDay(dayPlan) {
+  const done = dayPlan.tasks.filter((task) => localStorage.getItem(task.storageKey) === "1").length;
+  return dayPlan.tasks.length > 0 ? done / dayPlan.tasks.length : 0;
+}
+
+function heatLevel(ratio) {
+  if (ratio >= 0.8) return 4;
+  if (ratio >= 0.6) return 3;
+  if (ratio >= 0.35) return 2;
+  if (ratio > 0) return 1;
+  return 0;
+}
+
+function renderHeatmap() {
+  heatmapGrid.innerHTML = "";
+
+  allDayPlans.forEach((day) => {
+    const ratio = completionRatioForDay(day);
+    const cell = document.createElement("span");
+    cell.className = `heat-cell lvl-${heatLevel(ratio)}`;
+    cell.title = `${day.date.toLocaleDateString()} | ${(ratio * 100).toFixed(0)}% complete`;
+    heatmapGrid.appendChild(cell);
+  });
+
+  const today = new Date();
+  let streak = 0;
+  for (let i = allDayPlans.length - 1; i >= 0; i -= 1) {
+    const day = allDayPlans[i];
+    if (day.date > today) continue;
+    if (completionRatioForDay(day) >= 0.8) {
+      streak += 1;
+    } else {
+      break;
+    }
+  }
+
+  const activeDays = allDayPlans.filter((day) => completionRatioForDay(day) > 0).length;
+  streakSummary.textContent = `Current streak (>=80% day completion): ${streak} day(s) | Active days: ${activeDays}`;
+}
+
+function loadMockTests() {
+  try {
+    const raw = localStorage.getItem(MOCK_STORAGE_KEY);
+    mockTests = raw ? JSON.parse(raw) : [];
+  } catch {
+    mockTests = [];
+  }
+}
+
+function saveMockTests() {
+  localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(mockTests));
+}
+
+function renderMockTests() {
+  mockSummary.innerHTML = "";
+  mockList.innerHTML = "";
+
+  if (mockTests.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "day-meta";
+    empty.textContent = "No mocks added yet.";
+    mockList.appendChild(empty);
+    return;
+  }
+
+  const scores = mockTests.map((m) => Number(m.score));
+  const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+  const best = Math.max(...scores);
+  const latest = mockTests[mockTests.length - 1];
+
+  [
+    `Mocks: ${mockTests.length}`,
+    `Average: ${avg.toFixed(2)}`,
+    `Best: ${best.toFixed(2)}`,
+    `Latest: ${latest.score.toFixed(2)} (${latest.date})`
+  ].forEach((text) => {
+    const chip = document.createElement("p");
+    chip.className = "mock-chip";
+    chip.textContent = text;
+    mockSummary.appendChild(chip);
+  });
+
+  mockTests
+    .slice()
+    .reverse()
+    .forEach((mock) => {
+      const row = document.createElement("article");
+      row.className = "mock-row";
+
+      const date = document.createElement("p");
+      date.textContent = mock.date;
+      const score = document.createElement("p");
+      score.textContent = `${mock.score.toFixed(2)} / 100`;
+      const notes = document.createElement("p");
+      notes.textContent = mock.notes || "-";
+      const del = document.createElement("button");
+      del.type = "button";
+      del.textContent = "Delete";
+      del.addEventListener("click", () => {
+        mockTests = mockTests.filter((m) => m.id !== mock.id);
+        saveMockTests();
+        renderMockTests();
+      });
+
+      row.appendChild(date);
+      row.appendChild(score);
+      row.appendChild(notes);
+      row.appendChild(del);
+      mockList.appendChild(row);
+    });
+}
+
+function setupMockTracker() {
+  loadMockTests();
+  renderMockTests();
+
+  mockDateInput.value = dateId(new Date());
+
+  mockAddBtn.addEventListener("click", () => {
+    const date = mockDateInput.value;
+    const score = Number(mockScoreInput.value);
+    const notes = mockNotesInput.value.trim();
+
+    if (!date || Number.isNaN(score) || score < 0 || score > 100) {
+      return;
+    }
+
+    mockTests.push({
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      date,
+      score,
+      notes
+    });
+
+    mockTests.sort((a, b) => new Date(a.date) - new Date(b.date));
+    saveMockTests();
+    renderMockTests();
+
+    mockScoreInput.value = "";
+    mockNotesInput.value = "";
+  });
+}
+
 function buildDailyPlan() {
   RULES.forEach((rule, idx) => {
     rulesContainer.appendChild(makeCheckbox(idFor("rule", idx), rule));
@@ -414,14 +635,26 @@ function buildDailyPlan() {
     dayCard.appendChild(title);
     dayCard.appendChild(meta);
 
+    const dayPlan = {
+      dayIndex,
+      date: new Date(currentDate),
+      dateId: dateId(currentDate),
+      phase,
+      tasks: []
+    };
+
     tasks.forEach((task, taskIdx) => {
-      const checkboxLabel = makeCheckbox(idFor(`d${dayIndex}`, taskIdx), task);
+      const storageKey = idFor(`d${dayIndex}`, taskIdx);
+      const checkboxLabel = makeCheckbox(storageKey, task);
       const input = checkboxLabel.querySelector("input");
       if (input) {
-        input.dataset.dateKey = currentDate.toLocaleDateString();
+        input.dataset.dateId = dayPlan.dateId;
       }
       dayCard.appendChild(checkboxLabel);
+      dayPlan.tasks.push({ storageKey, text: task });
     });
+
+    allDayPlans.push(dayPlan);
 
     const monthContent = monthBlocks.get(key);
     monthContent.appendChild(dayCard);
@@ -432,6 +665,8 @@ function buildDailyPlan() {
 
   weeklyHoursInput.addEventListener("input", renderAllocator);
   renderAllocator();
+  renderTodayFocus();
+  renderHeatmap();
   renderStats();
 }
 
@@ -509,4 +744,5 @@ function initPomodoro() {
 }
 
 buildDailyPlan();
+setupMockTracker();
 initPomodoro();

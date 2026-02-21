@@ -46,6 +46,13 @@
     </section>
 
     <section class="card">
+      <h2>Today Focus</h2>
+      <p class="muted">Only today’s tasks. Finish these first.</p>
+      <p class="day-meta" id="today-focus-date"></p>
+      <div id="today-focus" class="checklist"></div>
+    </section>
+
+    <section class="card">
       <h2>Daily Time Block (Fixed)</h2>
       <ul class="timeline">
         <li><strong>6:30 AM - 8:30 AM:</strong> GATE concept / revision task</li>
@@ -100,6 +107,25 @@
         <a href="https://www.pw.live/gate/gate-cse-syllabus" target="_blank" rel="noopener noreferrer">PW</a>.
         Treat this as estimate, not official fixed marks.
       </p>
+    </section>
+
+    <section class="card">
+      <h2>Mock Test Tracker</h2>
+      <div class="mock-form">
+        <input id="mock-date" type="date" />
+        <input id="mock-score" type="number" min="0" max="100" step="0.1" placeholder="Score / 100" />
+        <input id="mock-notes" type="text" placeholder="Notes (weak area, mistakes)" />
+        <button type="button" id="mock-add">Add Mock</button>
+      </div>
+      <div id="mock-summary" class="mock-summary"></div>
+      <div id="mock-list" class="mock-list"></div>
+    </section>
+
+    <section class="card">
+      <h2>Study Streak + Heatmap</h2>
+      <p class="day-meta" id="streak-summary"></p>
+      <div id="heatmap-grid" class="heatmap-grid"></div>
+      <p class="source-note">Color scale: light = low completion, dark = high completion.</p>
     </section>
 
     <section class="card">

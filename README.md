@@ -7,6 +7,7 @@ A structured GitHub Pages checklist site for one full year.
 - Daily checklist: date-wise, phase-wise tasks
 - Includes: spaced revision, weekly tests, mock-test rhythm, progress dashboard
 - New: weightage + difficulty based weekly time allocator
+- New: today-focus panel, mock-test tracker, and study streak heatmap
 
 ## Syllabus Source
 Reference used while building this plan:
