@@ -97,6 +97,20 @@ const SUBJECT_ROTATION = [
   "General Aptitude"
 ];
 
+const BOOK_REFERENCES = {
+  "Engineering Mathematics": "Discrete Mathematics and Its Applications (Rosen) + Higher Engineering Mathematics (B.S. Grewal)",
+  "Programming and Data Structures": "Classic Data Structures (D. Samanta) + Let Us C (Yashavant Kanetkar)",
+  Algorithms: "Introduction to Algorithms (CLRS)",
+  "Operating Systems": "Operating System Concepts (Silberschatz)",
+  DBMS: "Database System Concepts (Korth) + DBMS (Ramakrishnan)",
+  "Computer Networks": "Computer Networking: A Top-Down Approach (Kurose & Ross)",
+  "Theory of Computation": "Introduction to Automata Theory (Hopcroft, Motwani, Ullman)",
+  "Computer Organization": "Computer Organization and Architecture (William Stallings)",
+  "Compiler Design": "Compilers: Principles, Techniques, and Tools (Aho, Lam, Sethi, Ullman)",
+  "Digital Logic": "Digital Design (M. Morris Mano)",
+  "General Aptitude": "Quantitative Aptitude (R.S. Aggarwal) + Word Power Made Easy (Norman Lewis)"
+};
+
 const startDate = new Date("2026-02-21");
 const endDate = new Date("2027-01-31");
 const MOCK_STORAGE_KEY = "gate-mock-tests-v1";
@@ -259,6 +273,12 @@ function revisionSubjectForDay(dayIndex) {
   return SUBJECT_ROTATION[dayIndex % SUBJECT_ROTATION.length];
 }
 
+function withReference(task, subject) {
+  const book = BOOK_REFERENCES[subject];
+  if (!book) return task;
+  return `${task} | Ref Book: ${book}`;
+}
+
 function tasksForDate(date, dayIndex) {
   const phase = phaseFor(date);
   const dayOfWeek = date.getDay();
@@ -284,11 +304,11 @@ function tasksForDate(date, dayIndex) {
     const practiceCount = phase === "foundation" ? 25 : 35;
 
     const tasks = [
-      `Morning concept: ${concept.label}`,
-      `Evening practice: solve ${practiceCount} questions on ${concept.subject}`,
-      `Spaced revision 1: ${revA}`,
-      `Spaced revision 2: ${revB}`,
-      "General Aptitude drill: 20-minute timed set",
+      withReference(`Morning concept: ${concept.label}`, concept.subject),
+      withReference(`Evening practice: solve ${practiceCount} questions on ${concept.subject}`, concept.subject),
+      withReference(`Spaced revision 1: ${revA}`, concept.subject),
+      withReference(`Spaced revision 2: ${revB}`, concept.subject),
+      withReference("General Aptitude drill: 20-minute timed set", "General Aptitude"),
       "Trading block (9:00 AM-3:00 PM): follow stop-loss and 2% risk cap",
       "Post-market (4:00 PM-5:00 PM): update trading journal with reason tags"
     ];
@@ -303,10 +323,10 @@ function tasksForDate(date, dayIndex) {
   if (phase === "revision") {
     const subject = revisionSubjectForDay(dayIndex);
     const tasks = [
-      `Revision focus: ${subject} (concept summary + formula sheet)`,
-      "PYQ drill: solve 35 questions and classify errors",
-      "Error notebook update: write top 5 avoidable mistakes",
-      "General Aptitude speed set: 15 questions timed",
+      withReference(`Revision focus: ${subject} (concept summary + formula sheet)`, subject),
+      withReference("PYQ drill: solve 35 questions and classify errors", subject),
+      withReference("Error notebook update: write top 5 avoidable mistakes", subject),
+      withReference("General Aptitude speed set: 15 questions timed", "General Aptitude"),
       "Trading block (9:00 AM-3:00 PM): process-first, no revenge trade",
       "Post-market (4:00 PM-5:00 PM): journal and weekly P/L behaviour check"
     ];
@@ -323,9 +343,9 @@ function tasksForDate(date, dayIndex) {
   const sprintTasks = [
     sprintMockDay
       ? "Full mock test day: 3 hours test + deep analysis of all wrong/guessed"
-      : `Weak-area repair: ${sprintSubject} focused drill + short notes polishing`,
-    "PYQ rapid set: 30 selected medium/hard questions",
-    "Error notebook closure: convert mistakes into one-line rules",
+      : withReference(`Weak-area repair: ${sprintSubject} focused drill + short notes polishing`, sprintSubject),
+    withReference("PYQ rapid set: 30 selected medium/hard questions", sprintSubject),
+    withReference("Error notebook closure: convert mistakes into one-line rules", sprintSubject),
     "Trading block (9:00 AM-3:00 PM): defend capital, avoid overtrading",
     "Post-market (4:00 PM-5:00 PM): journal and next-day risk limits"
   ];

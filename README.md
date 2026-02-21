@@ -9,6 +9,7 @@ A structured GitHub Pages checklist site for one full year.
 - New: weightage + difficulty based weekly time allocator
 - New: today-focus panel, mock-test tracker, and study streak heatmap
 - New: previous 5-year PYQ links (with solved checklist)
+- New: daily study tasks now include inline reference-book suggestions
 
 ## Syllabus Source
 Reference used while building this plan:
