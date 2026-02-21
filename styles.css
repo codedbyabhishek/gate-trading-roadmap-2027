@@ -1,0 +1,138 @@
+:root {
+  --bg: #f7f8ee;
+  --panel: #fffdf4;
+  --ink: #1d2b1f;
+  --muted: #4e5c50;
+  --accent: #0f766e;
+  --accent-2: #b45309;
+  --line: #dae3cd;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 12% 18%, #d9f99d 0, transparent 28%),
+    radial-gradient(circle at 90% 6%, #fde68a 0, transparent 22%),
+    var(--bg);
+  line-height: 1.5;
+}
+
+.hero {
+  max-width: 980px;
+  margin: 2rem auto 1rem;
+  padding: 0 1rem;
+}
+
+h1 {
+  margin: 0.6rem 0;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+}
+
+.lead {
+  max-width: 70ch;
+  color: var(--muted);
+}
+
+.chip {
+  display: inline-block;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.82rem;
+  background: #fff;
+}
+
+main {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 1rem 2rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 1rem;
+  box-shadow: 0 5px 20px rgba(15, 23, 42, 0.05);
+}
+
+h2 {
+  margin-top: 0;
+}
+
+.timeline {
+  padding-left: 1.1rem;
+}
+
+.timeline li {
+  margin: 0.45rem 0;
+}
+
+.checklist label,
+.week-card label {
+  display: block;
+  margin: 0.45rem 0;
+}
+
+input[type="checkbox"] {
+  accent-color: var(--accent);
+}
+
+.phase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.8rem;
+}
+
+.phase-grid article {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.75rem;
+  background: #fff;
+}
+
+.phase-grid h3 {
+  margin-top: 0;
+  font-size: 1rem;
+  color: var(--accent-2);
+}
+
+.muted {
+  color: var(--muted);
+  margin-top: -0.4rem;
+}
+
+.weeks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0.8rem;
+}
+
+.week-card {
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  padding: 0.7rem;
+  background: #fff;
+}
+
+.week-card h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+}
+
+footer {
+  max-width: 980px;
+  margin: 0 auto 2rem;
+  padding: 0 1rem;
+  color: var(--muted);
+  font-family: "IBM Plex Mono", monospace;
+}
