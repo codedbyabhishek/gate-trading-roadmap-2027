@@ -147,6 +147,57 @@ input[type="checkbox"] {
   margin-top: -0.4rem;
 }
 
+.allocator-controls {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.allocator-controls input {
+  width: 110px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.4rem 0.5rem;
+  font-family: "IBM Plex Mono", monospace;
+}
+
+.weightage-table {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.weightage-row {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.65rem;
+  background: #fff;
+  display: grid;
+  grid-template-columns: 1.5fr 0.7fr 1fr 0.9fr;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.weightage-row p {
+  margin: 0;
+}
+
+.weightage-row select {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.35rem;
+}
+
+.subject-name {
+  font-weight: 600;
+}
+
+.hours-chip {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.86rem;
+}
+
 .daily-plan {
   display: grid;
   gap: 0.8rem;
@@ -199,4 +250,10 @@ footer {
   padding: 0 1rem;
   color: var(--muted);
   font-family: "IBM Plex Mono", monospace;
+}
+
+@media (max-width: 860px) {
+  .weightage-row {
+    grid-template-columns: 1fr;
+  }
 }

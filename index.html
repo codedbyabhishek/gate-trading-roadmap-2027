@@ -68,6 +68,25 @@
     </section>
 
     <section class="card">
+      <h2>Weightage + Difficulty Time Allocator</h2>
+      <p class="muted">
+        Use estimated subject weightage (from recent PYQ trend analysis) and your difficulty rating.
+        The planner suggests weekly hours subject-wise.
+      </p>
+      <div class="allocator-controls">
+        <label for="weekly-hours"><strong>Total weekly GATE study hours:</strong></label>
+        <input id="weekly-hours" type="number" min="10" max="80" step="1" value="28" />
+      </div>
+      <div id="weightage-table" class="weightage-table"></div>
+      <p class="source-note">
+        Weightage baseline from recent PYQ trend analyses:
+        <a href="https://www.careers360.com/exams/gate/gate-cse-syllabus-and-exam-pattern" target="_blank" rel="noopener noreferrer">Careers360</a>,
+        <a href="https://www.pw.live/gate/gate-cse-syllabus" target="_blank" rel="noopener noreferrer">PW</a>.
+        Treat this as estimate, not official fixed marks.
+      </p>
+    </section>
+
+    <section class="card">
       <h2>Daily Topic Checklist (Auto-generated: Feb 21, 2026 -> Jan 31, 2027)</h2>
       <p class="muted">Each day has exact tasks. Sunday is review/reset day. Tick each task.</p>
       <div id="daily-plan" class="daily-plan"></div>

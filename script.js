@@ -8,6 +8,19 @@ const RULES = [
   "Sleep at least 7 hours, especially Jan 2027."
 ];
 
+const WEIGHTAGE_DATA = [
+  { subject: "General Aptitude", weightage: 15.73, difficulty: "medium" },
+  { subject: "Engineering Mathematics", weightage: 13.48, difficulty: "medium" },
+  { subject: "Programming and Data Structures", weightage: 16.4, difficulty: "hard" },
+  { subject: "Algorithms", weightage: 9.89, difficulty: "hard" },
+  { subject: "Operating Systems", weightage: 9.89, difficulty: "hard" },
+  { subject: "DBMS", weightage: 9.44, difficulty: "hard" },
+  { subject: "Computer Networks", weightage: 8.54, difficulty: "hard" },
+  { subject: "Theory of Computation", weightage: 8.76, difficulty: "hard" },
+  { subject: "Computer Organization and Digital Logic", weightage: 7.19, difficulty: "hard" },
+  { subject: "Compiler Design", weightage: 4.94, difficulty: "hard" }
+];
+
 const SYLLABUS_UNITS = [
   { subject: "Engineering Mathematics", topic: "Discrete structures: sets, relations, functions", sessions: 3 },
   { subject: "Engineering Mathematics", topic: "Propositional and first-order logic", sessions: 3 },
@@ -90,6 +103,8 @@ const endDate = new Date("2027-01-31");
 const rulesContainer = document.getElementById("rules");
 const dailyPlanContainer = document.getElementById("daily-plan");
 const statsContainer = document.getElementById("stats");
+const weightageTable = document.getElementById("weightage-table");
+const weeklyHoursInput = document.getElementById("weekly-hours");
 
 const scheduleState = {
   conceptQueueIndex: 0,
@@ -284,6 +299,66 @@ function renderStats() {
   });
 }
 
+function difficultyFactor(level) {
+  if (level === "easy") return 0.85;
+  if (level === "hard") return 1.3;
+  return 1.0;
+}
+
+function renderAllocator() {
+  const weeklyHours = Number(weeklyHoursInput.value || 28);
+  const items = WEIGHTAGE_DATA.map((entry, idx) => {
+    const level = localStorage.getItem(`difficulty-${idx}`) || entry.difficulty;
+    return { ...entry, level };
+  });
+
+  const weightedTotal = items.reduce(
+    (sum, item) => sum + item.weightage * difficultyFactor(item.level),
+    0
+  );
+
+  weightageTable.innerHTML = "";
+
+  items.forEach((item, idx) => {
+    const priorityScore = item.weightage * difficultyFactor(item.level);
+    const hours = weightedTotal > 0 ? (weeklyHours * priorityScore) / weightedTotal : 0;
+
+    const row = document.createElement("article");
+    row.className = "weightage-row";
+
+    const subject = document.createElement("p");
+    subject.className = "subject-name";
+    subject.textContent = item.subject;
+
+    const weight = document.createElement("p");
+    weight.className = "hours-chip";
+    weight.textContent = `${item.weightage.toFixed(2)}%`;
+
+    const select = document.createElement("select");
+    ["easy", "medium", "hard"].forEach((level) => {
+      const option = document.createElement("option");
+      option.value = level;
+      option.textContent = `Difficulty: ${level}`;
+      option.selected = item.level === level;
+      select.appendChild(option);
+    });
+    select.addEventListener("change", () => {
+      localStorage.setItem(`difficulty-${idx}`, select.value);
+      renderAllocator();
+    });
+
+    const hoursTag = document.createElement("p");
+    hoursTag.className = "hours-chip";
+    hoursTag.textContent = `${hours.toFixed(1)} hrs/week`;
+
+    row.appendChild(subject);
+    row.appendChild(weight);
+    row.appendChild(select);
+    row.appendChild(hoursTag);
+    weightageTable.appendChild(row);
+  });
+}
+
 function buildDailyPlan() {
   RULES.forEach((rule, idx) => {
     rulesContainer.appendChild(makeCheckbox(idFor("rule", idx), rule));
@@ -355,6 +430,8 @@ function buildDailyPlan() {
     dayIndex += 1;
   }
 
+  weeklyHoursInput.addEventListener("input", renderAllocator);
+  renderAllocator();
   renderStats();
 }
 
