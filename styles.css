@@ -49,6 +49,15 @@ h1 {
   background: #fff;
 }
 
+.source-note {
+  margin-top: 0.8rem;
+  font-size: 0.95rem;
+}
+
+.source-note a {
+  color: var(--accent);
+}
+
 main {
   max-width: 980px;
   margin: 0 auto;
@@ -78,7 +87,7 @@ h2 {
 }
 
 .checklist label,
-.week-card label {
+.day-card label {
   display: block;
   margin: 0.45rem 0;
 }
@@ -111,22 +120,50 @@ input[type="checkbox"] {
   margin-top: -0.4rem;
 }
 
-.weeks {
+.daily-plan {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 0.8rem;
 }
 
-.week-card {
-  border: 1px dashed var(--line);
+.month-block {
+  border: 1px solid var(--line);
   border-radius: 12px;
-  padding: 0.7rem;
   background: #fff;
+  overflow: hidden;
 }
 
-.week-card h3 {
-  margin: 0 0 0.4rem;
-  font-size: 1rem;
+.month-title {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: #f8fbf0;
+  padding: 0.8rem;
+  font-family: "IBM Plex Mono", monospace;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.month-content {
+  padding: 0.7rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.day-card {
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  padding: 0.7rem;
+}
+
+.day-card h3 {
+  margin: 0 0 0.3rem;
+  font-size: 0.98rem;
+}
+
+.day-meta {
+  margin: 0 0 0.5rem;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 footer {
