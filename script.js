@@ -435,4 +435,78 @@ function buildDailyPlan() {
   renderStats();
 }
 
+function initPomodoro() {
+  const timeEl = document.getElementById("pomodoro-time");
+  const modeEl = document.getElementById("pomodoro-mode");
+  const startBtn = document.getElementById("pomodoro-start");
+  const pauseBtn = document.getElementById("pomodoro-pause");
+  const resetBtn = document.getElementById("pomodoro-reset");
+  const presetWorkBtn = document.getElementById("preset-work");
+  const presetFocusBtn = document.getElementById("preset-focus");
+
+  let workMinutes = 25;
+  let breakMinutes = 5;
+  let mode = "work";
+  let remainingSeconds = workMinutes * 60;
+  let timer = null;
+
+  function formatTime(totalSeconds) {
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
+    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  }
+
+  function refresh() {
+    timeEl.textContent = formatTime(remainingSeconds);
+    modeEl.textContent = `Mode: ${mode === "work" ? "Work" : "Break"}`;
+  }
+
+  function nextMode() {
+    mode = mode === "work" ? "break" : "work";
+    remainingSeconds = (mode === "work" ? workMinutes : breakMinutes) * 60;
+    refresh();
+  }
+
+  function startTimer() {
+    if (timer) return;
+    timer = setInterval(() => {
+      if (remainingSeconds > 0) {
+        remainingSeconds -= 1;
+        refresh();
+        return;
+      }
+
+      nextMode();
+    }, 1000);
+  }
+
+  function pauseTimer() {
+    if (!timer) return;
+    clearInterval(timer);
+    timer = null;
+  }
+
+  function resetTimer() {
+    pauseTimer();
+    mode = "work";
+    remainingSeconds = workMinutes * 60;
+    refresh();
+  }
+
+  function applyPreset(newWork, newBreak) {
+    workMinutes = newWork;
+    breakMinutes = newBreak;
+    resetTimer();
+  }
+
+  startBtn.addEventListener("click", startTimer);
+  pauseBtn.addEventListener("click", pauseTimer);
+  resetBtn.addEventListener("click", resetTimer);
+  presetWorkBtn.addEventListener("click", () => applyPreset(25, 5));
+  presetFocusBtn.addEventListener("click", () => applyPreset(50, 10));
+
+  refresh();
+}
+
 buildDailyPlan();
+initPomodoro();

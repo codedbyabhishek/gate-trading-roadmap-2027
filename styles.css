@@ -23,10 +23,69 @@ body {
   line-height: 1.5;
 }
 
+.pomodoro-sidebar {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  width: 280px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  padding: 0.9rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  z-index: 10;
+}
+
+.pomodoro-sidebar h2 {
+  margin: 0 0 0.45rem;
+  font-size: 1.05rem;
+}
+
+.pomodoro-mode {
+  margin: 0.1rem 0;
+  color: var(--muted);
+}
+
+.pomodoro-time {
+  margin: 0.3rem 0 0.7rem;
+  font-size: 2rem;
+  font-family: "IBM Plex Mono", monospace;
+}
+
+.pomodoro-presets,
+.pomodoro-actions {
+  display: grid;
+  gap: 0.45rem;
+  margin-bottom: 0.6rem;
+}
+
+.pomodoro-presets {
+  grid-template-columns: 1fr 1fr;
+}
+
+.pomodoro-actions {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.pomodoro-sidebar button {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fbf0;
+  padding: 0.45rem;
+  cursor: pointer;
+  font-family: "IBM Plex Mono", monospace;
+}
+
+.pomodoro-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
 .hero {
   max-width: 1080px;
   margin: 2rem auto 1rem;
-  padding: 0 1rem;
+  padding: 0 320px 0 1rem;
 }
 
 h1 {
@@ -61,7 +120,7 @@ h1 {
 main {
   max-width: 1080px;
   margin: 0 auto;
-  padding: 0 1rem 2rem;
+  padding: 0 320px 2rem 1rem;
   display: grid;
   gap: 1rem;
 }
@@ -253,6 +312,20 @@ footer {
 }
 
 @media (max-width: 860px) {
+  .pomodoro-sidebar {
+    position: static;
+    width: auto;
+    margin: 1rem;
+  }
+
+  .hero {
+    padding: 0 1rem;
+  }
+
+  main {
+    padding: 0 1rem 2rem;
+  }
+
   .weightage-row {
     grid-template-columns: 1fr;
   }
