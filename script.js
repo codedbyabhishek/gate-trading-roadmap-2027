@@ -3,116 +3,97 @@ const RULES = [
   "During 9 AM-3 PM trading: max 2% capital risk per day.",
   "Always set stop loss before entering any trade.",
   "Write daily trading journal (win/loss + reason).",
-  "Solve minimum 20 GATE questions daily (mixed easy + medium).",
+  "Attempt minimum 20 topic questions on study days.",
   "Every Sunday: review mistakes and plan next week.",
-  "Sleep at least 7 hours. No compromise in Jan 2027."
+  "Sleep at least 7 hours, especially Jan 2027."
 ];
 
-const PHASE_POOLS = {
-  foundation: [
-    "Engineering Mathematics: Sets, relations, functions",
-    "Engineering Mathematics: Propositional and predicate logic basics",
-    "Engineering Mathematics: Mathematical induction",
-    "Engineering Mathematics: Combinatorics and counting",
-    "Engineering Mathematics: Recurrence relations basics",
-    "Engineering Mathematics: Graph basics and trees",
-    "Engineering Mathematics: Matrices and matrix properties",
-    "Engineering Mathematics: Eigenvalues and eigenvectors",
-    "Engineering Mathematics: Probability fundamentals",
-    "Engineering Mathematics: Random variables and distributions",
-    "Programming and Data Structures: C basics and syntax",
-    "Programming and Data Structures: Conditions, loops, functions",
-    "Programming and Data Structures: Arrays and strings",
-    "Programming and Data Structures: Pointers and memory",
-    "Programming and Data Structures: Structures and recursion",
-    "Programming and Data Structures: Linked list basics",
-    "Programming and Data Structures: Stack and queue basics",
-    "General Aptitude: Verbal analogies and grammar",
-    "General Aptitude: Reading comprehension practice",
-    "General Aptitude: Quant basics (ratio, percentages, averages)"
-  ],
-  core: [
-    "Programming and Data Structures: Trees and BST",
-    "Programming and Data Structures: Heaps and hash tables",
-    "Algorithms: Asymptotic notation and complexity",
-    "Algorithms: Recurrence solving and divide-and-conquer",
-    "Algorithms: Greedy algorithms",
-    "Algorithms: Dynamic programming",
-    "Algorithms: Graph algorithms (BFS, DFS, shortest path)",
-    "Operating Systems: Processes, threads, CPU scheduling",
-    "Operating Systems: Deadlock and synchronization",
-    "Operating Systems: Memory management and paging",
-    "Operating Systems: Virtual memory and file systems",
-    "DBMS: ER model and relational model",
-    "DBMS: Relational algebra and calculus",
-    "DBMS: SQL queries and joins",
-    "DBMS: Normalization and functional dependency",
-    "DBMS: Transactions, serializability, recovery",
-    "Computer Networks: OSI/TCP-IP and layering",
-    "Computer Networks: Routing basics",
-    "Computer Networks: Transport layer (TCP/UDP)",
-    "Computer Networks: Application layer and DNS/HTTP"
-  ],
-  depth: [
-    "Theory of Computation: Regular languages and DFA/NFA",
-    "Theory of Computation: Context-free grammar and PDA",
-    "Theory of Computation: Turing machines and decidability",
-    "Theory of Computation: Complexity classes P, NP, NP-complete",
-    "Compiler Design: Lexical analysis",
-    "Compiler Design: Parsing techniques",
-    "Compiler Design: Syntax-directed translation",
-    "Compiler Design: Intermediate code generation",
-    "Compiler Design: Code optimization basics",
-    "Computer Organization: Number representation",
-    "Computer Organization: ALU and datapath",
-    "Computer Organization: Pipeline and hazards",
-    "Computer Organization: Cache and memory hierarchy",
-    "Digital Logic: Boolean algebra and minimization",
-    "Digital Logic: Combinational circuit design",
-    "Digital Logic: Sequential circuits and flip-flops",
-    "Digital Logic: Counters and finite state machines",
-    "Engineering Mathematics: Number theory basics",
-    "General Aptitude: Mixed higher difficulty sets",
-    "PYQ Focus: Topic-wise previous year questions"
-  ],
-  revision: [
-    "Revision Block: Engineering Mathematics mixed",
-    "Revision Block: Programming and Data Structures mixed",
-    "Revision Block: Algorithms mixed",
-    "Revision Block: Operating Systems mixed",
-    "Revision Block: DBMS mixed",
-    "Revision Block: Computer Networks mixed",
-    "Revision Block: Theory of Computation mixed",
-    "Revision Block: Compiler Design mixed",
-    "Revision Block: Computer Organization mixed",
-    "Revision Block: Digital Logic mixed",
-    "Revision Block: General Aptitude mixed",
-    "Mock Test: Full-length GATE test + analysis",
-    "Error Notebook: Fix top 10 recurring mistakes"
-  ],
-  sprint: [
-    "Full Mock Test + deep analysis",
-    "Weak Topic Drill: TOC and Compiler",
-    "Weak Topic Drill: OS and DBMS",
-    "Weak Topic Drill: Algorithms and DS",
-    "Weak Topic Drill: Networks and COA",
-    "Formula/Concept revision: Engineering Mathematics",
-    "General Aptitude speed drill",
-    "PYQ rapid revision: selected difficult questions"
-  ]
-};
+const SYLLABUS_UNITS = [
+  { subject: "Engineering Mathematics", topic: "Discrete structures: sets, relations, functions", sessions: 3 },
+  { subject: "Engineering Mathematics", topic: "Propositional and first-order logic", sessions: 3 },
+  { subject: "Engineering Mathematics", topic: "Mathematical induction and recurrences", sessions: 3 },
+  { subject: "Engineering Mathematics", topic: "Counting, combinatorics, graph basics", sessions: 4 },
+  { subject: "Engineering Mathematics", topic: "Linear algebra: matrices, rank, inverse", sessions: 4 },
+  { subject: "Engineering Mathematics", topic: "Eigenvalues, eigenvectors, linear equations", sessions: 3 },
+  { subject: "Engineering Mathematics", topic: "Probability basics and conditional probability", sessions: 3 },
+  { subject: "Engineering Mathematics", topic: "Random variables and standard distributions", sessions: 3 },
+
+  { subject: "Programming and Data Structures", topic: "C basics, control flow, functions", sessions: 3 },
+  { subject: "Programming and Data Structures", topic: "Pointers, arrays, strings", sessions: 4 },
+  { subject: "Programming and Data Structures", topic: "Recursion and complexity intuition", sessions: 3 },
+  { subject: "Programming and Data Structures", topic: "Linked lists, stacks, queues", sessions: 4 },
+  { subject: "Programming and Data Structures", topic: "Trees, BST, heap", sessions: 4 },
+  { subject: "Programming and Data Structures", topic: "Hashing and union-find basics", sessions: 3 },
+
+  { subject: "Algorithms", topic: "Asymptotic notation and recurrences", sessions: 4 },
+  { subject: "Algorithms", topic: "Divide and conquer", sessions: 3 },
+  { subject: "Algorithms", topic: "Greedy methods", sessions: 3 },
+  { subject: "Algorithms", topic: "Dynamic programming", sessions: 5 },
+  { subject: "Algorithms", topic: "Graph algorithms (BFS/DFS/shortest path)", sessions: 5 },
+
+  { subject: "Operating Systems", topic: "Processes, threads, scheduling", sessions: 4 },
+  { subject: "Operating Systems", topic: "Synchronization and deadlocks", sessions: 4 },
+  { subject: "Operating Systems", topic: "Memory management, virtual memory", sessions: 4 },
+  { subject: "Operating Systems", topic: "File systems and I/O", sessions: 3 },
+
+  { subject: "DBMS", topic: "ER model and relational model", sessions: 3 },
+  { subject: "DBMS", topic: "Relational algebra and SQL", sessions: 5 },
+  { subject: "DBMS", topic: "Dependencies and normalization", sessions: 4 },
+  { subject: "DBMS", topic: "Transactions, serializability, recovery", sessions: 4 },
+
+  { subject: "Computer Networks", topic: "Layered architecture and protocols", sessions: 3 },
+  { subject: "Computer Networks", topic: "Data link, switching, routing", sessions: 4 },
+  { subject: "Computer Networks", topic: "Transport layer (TCP/UDP)", sessions: 4 },
+  { subject: "Computer Networks", topic: "Application layer (DNS/HTTP/email)", sessions: 3 },
+
+  { subject: "Theory of Computation", topic: "Regular languages and finite automata", sessions: 4 },
+  { subject: "Theory of Computation", topic: "CFG and pushdown automata", sessions: 4 },
+  { subject: "Theory of Computation", topic: "Turing machines and undecidability", sessions: 4 },
+  { subject: "Theory of Computation", topic: "Complexity classes P/NP/NP-complete", sessions: 4 },
+
+  { subject: "Computer Organization", topic: "Number systems and arithmetic", sessions: 3 },
+  { subject: "Computer Organization", topic: "Datapath, control unit", sessions: 4 },
+  { subject: "Computer Organization", topic: "Pipelining and hazards", sessions: 4 },
+  { subject: "Computer Organization", topic: "Cache, memory hierarchy, I/O", sessions: 4 },
+
+  { subject: "Compiler Design", topic: "Lexical analysis and finite automata", sessions: 3 },
+  { subject: "Compiler Design", topic: "Parsing techniques", sessions: 4 },
+  { subject: "Compiler Design", topic: "Syntax-directed translation", sessions: 3 },
+  { subject: "Compiler Design", topic: "Intermediate code and optimization", sessions: 4 },
+
+  { subject: "Digital Logic", topic: "Boolean algebra and minimization", sessions: 3 },
+  { subject: "Digital Logic", topic: "Combinational circuits", sessions: 3 },
+  { subject: "Digital Logic", topic: "Sequential circuits and FSM", sessions: 4 },
+
+  { subject: "General Aptitude", topic: "Grammar, reading comprehension", sessions: 4 },
+  { subject: "General Aptitude", topic: "Percentages, ratio, averages", sessions: 4 },
+  { subject: "General Aptitude", topic: "Data interpretation and logic", sessions: 4 }
+];
+
+const SUBJECT_ROTATION = [
+  "Engineering Mathematics",
+  "Programming and Data Structures",
+  "Algorithms",
+  "Operating Systems",
+  "DBMS",
+  "Computer Networks",
+  "Theory of Computation",
+  "Computer Organization",
+  "Compiler Design",
+  "Digital Logic",
+  "General Aptitude"
+];
 
 const startDate = new Date("2026-02-21");
 const endDate = new Date("2027-01-31");
+
 const rulesContainer = document.getElementById("rules");
 const dailyPlanContainer = document.getElementById("daily-plan");
+const statsContainer = document.getElementById("stats");
 
-const phaseState = {
-  foundation: 0,
-  core: 0,
-  depth: 0,
-  revision: 0,
-  sprint: 0
+const scheduleState = {
+  conceptQueueIndex: 0,
+  studied: []
 };
 
 function idFor(prefix, index) {
@@ -127,6 +108,7 @@ function makeCheckbox(id, text) {
   input.checked = localStorage.getItem(id) === "1";
   input.addEventListener("change", () => {
     localStorage.setItem(id, input.checked ? "1" : "0");
+    renderStats();
   });
 
   label.appendChild(input);
@@ -134,14 +116,9 @@ function makeCheckbox(id, text) {
   return label;
 }
 
-RULES.forEach((rule, idx) => {
-  rulesContainer.appendChild(makeCheckbox(idFor("rule", idx), rule));
-});
-
 function phaseFor(date) {
-  if (date <= new Date("2026-03-31")) return "foundation";
-  if (date <= new Date("2026-07-31")) return "core";
-  if (date <= new Date("2026-10-31")) return "depth";
+  if (date <= new Date("2026-05-31")) return "foundation";
+  if (date <= new Date("2026-10-31")) return "core";
   if (date <= new Date("2026-12-31")) return "revision";
   return "sprint";
 }
@@ -149,50 +126,116 @@ function phaseFor(date) {
 function phaseLabel(phase) {
   return {
     foundation: "Foundation",
-    core: "Core Build",
-    depth: "Problem Depth",
-    revision: "Revision + Tests",
+    core: "Core Coverage",
+    revision: "Revision Engine",
     sprint: "Final Sprint"
   }[phase];
 }
 
-function nextTopic(phase) {
-  const pool = PHASE_POOLS[phase];
-  const idx = phaseState[phase];
-  const topic = pool[idx % pool.length];
-  const round = Math.floor(idx / pool.length) + 1;
-  phaseState[phase] += 1;
-  return `${topic} (Round ${round})`;
+function buildConceptQueue() {
+  const expanded = [];
+  SYLLABUS_UNITS.forEach((unit) => {
+    for (let i = 1; i <= unit.sessions; i += 1) {
+      expanded.push({
+        ...unit,
+        label: `${unit.subject}: ${unit.topic} (Session ${i}/${unit.sessions})`
+      });
+    }
+  });
+  return expanded;
 }
 
-function taskListForDate(date, dayIndex) {
+const conceptQueue = buildConceptQueue();
+
+function nextConceptTask() {
+  const item = conceptQueue[scheduleState.conceptQueueIndex % conceptQueue.length];
+  scheduleState.conceptQueueIndex += 1;
+  scheduleState.studied.push(item.label);
+  return item;
+}
+
+function recentTopic(offset) {
+  const idx = scheduleState.studied.length - offset;
+  if (idx < 0) return "Quick revision from your handwritten notes";
+  return scheduleState.studied[idx];
+}
+
+function revisionSubjectForDay(dayIndex) {
+  return SUBJECT_ROTATION[dayIndex % SUBJECT_ROTATION.length];
+}
+
+function tasksForDate(date, dayIndex) {
   const phase = phaseFor(date);
   const dayOfWeek = date.getDay();
+  const isSunday = dayOfWeek === 0;
+  const isSaturday = dayOfWeek === 6;
 
-  if (dayOfWeek === 0) {
+  if (isSunday) {
     return {
       phase,
       tasks: [
-        "Weekly review: revise all topics studied this week",
-        "Solve 40 mixed PYQs from this week topics",
-        "Analyze trading journal and list 3 mistakes + 3 improvements",
-        "Plan exact topics for next 6 days"
+        "Weekly review: revise all notes from this week",
+        "Solve 40 mixed PYQs from this week's subjects",
+        "Analyze trading journal: 3 mistakes and 3 process improvements",
+        "Plan next week topics and keep books/questions ready"
       ]
     };
   }
 
-  const topic = nextTopic(phase);
-  const practiceCount = phase === "sprint" ? 50 : phase === "revision" ? 40 : 25;
+  if (phase === "foundation" || phase === "core") {
+    const concept = nextConceptTask();
+    const revA = recentTopic(3);
+    const revB = recentTopic(7);
+    const practiceCount = phase === "foundation" ? 25 : 35;
 
-  return {
-    phase,
-    tasks: [
-      `Morning GATE study: ${topic}`,
-      `Evening GATE practice: solve ${practiceCount} questions from same topic`,
-      "Trading block (9:00 AM-3:00 PM): follow risk rules + stop loss",
-      "Post-market (4:00 PM-5:00 PM): update journal with screenshots and reason"
-    ]
-  };
+    const tasks = [
+      `Morning concept: ${concept.label}`,
+      `Evening practice: solve ${practiceCount} questions on ${concept.subject}`,
+      `Spaced revision 1: ${revA}`,
+      `Spaced revision 2: ${revB}`,
+      "General Aptitude drill: 20-minute timed set",
+      "Trading block (9:00 AM-3:00 PM): follow stop-loss and 2% risk cap",
+      "Post-market (4:00 PM-5:00 PM): update trading journal with reason tags"
+    ];
+
+    if (isSaturday) {
+      tasks.unshift("Saturday mini-test: 30 mixed questions + 45-minute review");
+    }
+
+    return { phase, tasks };
+  }
+
+  if (phase === "revision") {
+    const subject = revisionSubjectForDay(dayIndex);
+    const tasks = [
+      `Revision focus: ${subject} (concept summary + formula sheet)`,
+      "PYQ drill: solve 35 questions and classify errors",
+      "Error notebook update: write top 5 avoidable mistakes",
+      "General Aptitude speed set: 15 questions timed",
+      "Trading block (9:00 AM-3:00 PM): process-first, no revenge trade",
+      "Post-market (4:00 PM-5:00 PM): journal and weekly P/L behaviour check"
+    ];
+
+    if (isSaturday) {
+      tasks.unshift("Full mock test: 3 hours + 2 hours analysis (non-negotiable)");
+    }
+
+    return { phase, tasks };
+  }
+
+  const sprintMockDay = dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5;
+  const sprintSubject = revisionSubjectForDay(dayIndex + 2);
+  const sprintTasks = [
+    sprintMockDay
+      ? "Full mock test day: 3 hours test + deep analysis of all wrong/guessed"
+      : `Weak-area repair: ${sprintSubject} focused drill + short notes polishing`,
+    "PYQ rapid set: 30 selected medium/hard questions",
+    "Error notebook closure: convert mistakes into one-line rules",
+    "Trading block (9:00 AM-3:00 PM): defend capital, avoid overtrading",
+    "Post-market (4:00 PM-5:00 PM): journal and next-day risk limits"
+  ];
+
+  return { phase, tasks: sprintTasks };
 }
 
 function monthKey(date) {
@@ -206,7 +249,46 @@ function monthLabel(date) {
   });
 }
 
+function renderStats() {
+  const allBoxes = Array.from(document.querySelectorAll("input[type='checkbox']"));
+  const total = allBoxes.length;
+  const done = allBoxes.filter((box) => box.checked).length;
+  const pct = total > 0 ? ((done / total) * 100).toFixed(1) : "0.0";
+
+  const today = new Date();
+  const todayKey = today.toLocaleDateString();
+  const todayBoxes = allBoxes.filter((box) => box.dataset.dateKey === todayKey);
+  const todayDone = todayBoxes.filter((box) => box.checked).length;
+
+  statsContainer.innerHTML = "";
+  [
+    { label: "Total Tasks Done", value: `${done}/${total}` },
+    { label: "Overall Completion", value: `${pct}%` },
+    { label: "Today's Tasks Done", value: `${todayDone}/${todayBoxes.length || 0}` },
+    { label: "Plan Range", value: "Feb 21, 2026 -> Jan 31, 2027" }
+  ].forEach((item) => {
+    const box = document.createElement("article");
+    box.className = "stat-box";
+
+    const label = document.createElement("p");
+    label.className = "stat-label";
+    label.textContent = item.label;
+
+    const value = document.createElement("p");
+    value.className = "stat-value";
+    value.textContent = item.value;
+
+    box.appendChild(label);
+    box.appendChild(value);
+    statsContainer.appendChild(box);
+  });
+}
+
 function buildDailyPlan() {
+  RULES.forEach((rule, idx) => {
+    rulesContainer.appendChild(makeCheckbox(idFor("rule", idx), rule));
+  });
+
   const monthBlocks = new Map();
   let cursor = new Date(startDate);
   let dayIndex = 1;
@@ -235,12 +317,8 @@ function buildDailyPlan() {
       monthWrapper.appendChild(monthBtn);
       monthWrapper.appendChild(monthContent);
       dailyPlanContainer.appendChild(monthWrapper);
-
       monthBlocks.set(key, monthContent);
     }
-
-    const { phase, tasks } = taskListForDate(currentDate, dayIndex);
-    const content = monthBlocks.get(key);
 
     const dayCard = document.createElement("article");
     dayCard.className = "day-card";
@@ -253,6 +331,7 @@ function buildDailyPlan() {
       year: "numeric"
     })}`;
 
+    const { phase, tasks } = tasksForDate(currentDate, dayIndex);
     const meta = document.createElement("p");
     meta.className = "day-meta";
     meta.textContent = `Phase: ${phaseLabel(phase)}`;
@@ -261,14 +340,22 @@ function buildDailyPlan() {
     dayCard.appendChild(meta);
 
     tasks.forEach((task, taskIdx) => {
-      dayCard.appendChild(makeCheckbox(idFor(`d${dayIndex}`, taskIdx), task));
+      const checkboxLabel = makeCheckbox(idFor(`d${dayIndex}`, taskIdx), task);
+      const input = checkboxLabel.querySelector("input");
+      if (input) {
+        input.dataset.dateKey = currentDate.toLocaleDateString();
+      }
+      dayCard.appendChild(checkboxLabel);
     });
 
-    content.appendChild(dayCard);
+    const monthContent = monthBlocks.get(key);
+    monthContent.appendChild(dayCard);
 
     cursor.setDate(cursor.getDate() + 1);
     dayIndex += 1;
   }
+
+  renderStats();
 }
 
 buildDailyPlan();
