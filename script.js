@@ -209,6 +209,7 @@ function notifyProgressChanged() {
 
 function makeCheckbox(storageKey, text, domId) {
   const label = document.createElement("label");
+  label.className = "task-label";
   const input = document.createElement("input");
   input.type = "checkbox";
   input.id = domId || storageKey;
@@ -220,8 +221,28 @@ function makeCheckbox(storageKey, text, domId) {
     notifyProgressChanged();
   });
 
+  const content = document.createElement("span");
+  content.className = "task-content";
+
+  const parts = String(text)
+    .split(" || ")
+    .map((p) => p.trim())
+    .filter(Boolean);
+
+  const main = document.createElement("span");
+  main.className = "task-main";
+  main.textContent = parts[0] || text;
+  content.appendChild(main);
+
+  parts.slice(1).forEach((metaText) => {
+    const meta = document.createElement("span");
+    meta.className = "task-meta";
+    meta.textContent = metaText;
+    content.appendChild(meta);
+  });
+
   label.appendChild(input);
-  label.append(` ${text}`);
+  label.appendChild(content);
   return label;
 }
 
@@ -276,7 +297,19 @@ function revisionSubjectForDay(dayIndex) {
 function withReference(task, subject) {
   const book = BOOK_REFERENCES[subject];
   if (!book) return task;
-  return `${task} | Ref Book: ${book}`;
+  return `${task} || Ref Book: ${book}`;
+}
+
+function withTime(task, minutes) {
+  return `${task} || Time: ${minutes} min`;
+}
+
+function withSlot(task, slotText) {
+  return `${task} || Time Slot: ${slotText}`;
+}
+
+function buildStudyTask(task, subject, minutes) {
+  return withReference(withTime(task, minutes), subject);
 }
 
 function tasksForDate(date, dayIndex) {
@@ -289,10 +322,10 @@ function tasksForDate(date, dayIndex) {
     return {
       phase,
       tasks: [
-        "Weekly review: revise all notes from this week",
-        "Solve 40 mixed PYQs from this week's subjects",
-        "Analyze trading journal: 3 mistakes and 3 process improvements",
-        "Plan next week topics and keep books/questions ready"
+        withTime("Weekly review: revise all notes from this week", 90),
+        withTime("Solve 40 mixed PYQs from this week's subjects", 120),
+        withTime("Analyze trading journal: 3 mistakes and 3 process improvements", 40),
+        withTime("Plan next week topics and keep books/questions ready", 30)
       ]
     };
   }
@@ -304,17 +337,17 @@ function tasksForDate(date, dayIndex) {
     const practiceCount = phase === "foundation" ? 25 : 35;
 
     const tasks = [
-      withReference(`Morning concept: ${concept.label}`, concept.subject),
-      withReference(`Evening practice: solve ${practiceCount} questions on ${concept.subject}`, concept.subject),
-      withReference(`Spaced revision 1: ${revA}`, concept.subject),
-      withReference(`Spaced revision 2: ${revB}`, concept.subject),
-      withReference("General Aptitude drill: 20-minute timed set", "General Aptitude"),
-      "Trading block (9:00 AM-3:00 PM): follow stop-loss and 2% risk cap",
-      "Post-market (4:00 PM-5:00 PM): update trading journal with reason tags"
+      buildStudyTask(`Morning concept: ${concept.label}`, concept.subject, 120),
+      buildStudyTask(`Evening practice: solve ${practiceCount} questions on ${concept.subject}`, concept.subject, 90),
+      buildStudyTask(`Spaced revision 1: ${revA}`, concept.subject, 30),
+      buildStudyTask(`Spaced revision 2: ${revB}`, concept.subject, 25),
+      buildStudyTask("General Aptitude drill: 20-minute timed set", "General Aptitude", 20),
+      withSlot("Trading block: follow stop-loss and 2% risk cap", "9:00 AM-3:00 PM"),
+      withSlot("Post-market: update trading journal with reason tags", "4:00 PM-5:00 PM")
     ];
 
     if (isSaturday) {
-      tasks.unshift("Saturday mini-test: 30 mixed questions + 45-minute review");
+      tasks.unshift(withTime("Saturday mini-test: 30 mixed questions + 45-minute review", 90));
     }
 
     return { phase, tasks };
@@ -323,16 +356,16 @@ function tasksForDate(date, dayIndex) {
   if (phase === "revision") {
     const subject = revisionSubjectForDay(dayIndex);
     const tasks = [
-      withReference(`Revision focus: ${subject} (concept summary + formula sheet)`, subject),
-      withReference("PYQ drill: solve 35 questions and classify errors", subject),
-      withReference("Error notebook update: write top 5 avoidable mistakes", subject),
-      withReference("General Aptitude speed set: 15 questions timed", "General Aptitude"),
-      "Trading block (9:00 AM-3:00 PM): process-first, no revenge trade",
-      "Post-market (4:00 PM-5:00 PM): journal and weekly P/L behaviour check"
+      buildStudyTask(`Revision focus: ${subject} (concept summary + formula sheet)`, subject, 100),
+      buildStudyTask("PYQ drill: solve 35 questions and classify errors", subject, 100),
+      buildStudyTask("Error notebook update: write top 5 avoidable mistakes", subject, 35),
+      buildStudyTask("General Aptitude speed set: 15 questions timed", "General Aptitude", 20),
+      withSlot("Trading block: process-first, no revenge trade", "9:00 AM-3:00 PM"),
+      withSlot("Post-market: journal and weekly P/L behaviour check", "4:00 PM-5:00 PM")
     ];
 
     if (isSaturday) {
-      tasks.unshift("Full mock test: 3 hours + 2 hours analysis (non-negotiable)");
+      tasks.unshift(withTime("Full mock test + analysis (non-negotiable)", 300));
     }
 
     return { phase, tasks };
@@ -342,12 +375,12 @@ function tasksForDate(date, dayIndex) {
   const sprintSubject = revisionSubjectForDay(dayIndex + 2);
   const sprintTasks = [
     sprintMockDay
-      ? "Full mock test day: 3 hours test + deep analysis of all wrong/guessed"
-      : withReference(`Weak-area repair: ${sprintSubject} focused drill + short notes polishing`, sprintSubject),
-    withReference("PYQ rapid set: 30 selected medium/hard questions", sprintSubject),
-    withReference("Error notebook closure: convert mistakes into one-line rules", sprintSubject),
-    "Trading block (9:00 AM-3:00 PM): defend capital, avoid overtrading",
-    "Post-market (4:00 PM-5:00 PM): journal and next-day risk limits"
+      ? withTime("Full mock test day + deep analysis of all wrong/guessed", 300)
+      : buildStudyTask(`Weak-area repair: ${sprintSubject} focused drill + short notes polishing`, sprintSubject, 120),
+    buildStudyTask("PYQ rapid set: 30 selected medium/hard questions", sprintSubject, 90),
+    buildStudyTask("Error notebook closure: convert mistakes into one-line rules", sprintSubject, 35),
+    withSlot("Trading block: defend capital, avoid overtrading", "9:00 AM-3:00 PM"),
+    withSlot("Post-market: journal and next-day risk limits", "4:00 PM-5:00 PM")
   ];
 
   return { phase, tasks: sprintTasks };

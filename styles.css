@@ -178,6 +178,31 @@ h2 {
   margin: 0.45rem 0;
 }
 
+.task-label {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 0.5rem;
+  align-items: start;
+}
+
+.task-content {
+  min-width: 0;
+}
+
+.task-main {
+  display: block;
+}
+
+.task-meta {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-family: "IBM Plex Mono", monospace;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
 input[type="checkbox"] {
   accent-color: var(--accent);
 }
@@ -431,7 +456,7 @@ footer {
   font-family: "IBM Plex Mono", monospace;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1200px) {
   .pomodoro-sidebar {
     position: static;
     width: auto;
@@ -444,6 +469,12 @@ footer {
 
   main {
     padding: 0 1rem 2rem;
+  }
+}
+
+@media (max-width: 860px) {
+  .pomodoro-sidebar {
+    margin-bottom: 0;
   }
 
   .weightage-row {

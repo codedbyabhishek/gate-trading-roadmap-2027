@@ -10,6 +10,7 @@ A structured GitHub Pages checklist site for one full year.
 - New: today-focus panel, mock-test tracker, and study streak heatmap
 - New: previous 5-year PYQ links (with solved checklist)
 - New: daily study tasks now include inline reference-book suggestions
+- New: daily tasks now show time estimates / time slots with cleaner task layout
 
 ## Syllabus Source
 Reference used while building this plan:
