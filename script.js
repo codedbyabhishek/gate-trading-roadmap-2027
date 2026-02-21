@@ -100,6 +100,48 @@ const SUBJECT_ROTATION = [
 const startDate = new Date("2026-02-21");
 const endDate = new Date("2027-01-31");
 const MOCK_STORAGE_KEY = "gate-mock-tests-v1";
+const PYQ_LINKS = [
+  {
+    label: "2025 (Session 1)",
+    paper: "https://drive.google.com/file/d/1uQ2SEZ5M3JfQ4NO66-oJQjhOdR44n2ef/view",
+    key: "https://drive.google.com/file/d/1odxGurA8dfxNl4xhAoJvSLWG4VJQfwsK/view"
+  },
+  {
+    label: "2025 (Session 2)",
+    paper: "https://drive.google.com/file/d/1Wi4M8yYISQ9YUw-nj9F6x2zLqrL31wM7/view",
+    key: "https://drive.google.com/file/d/1-n9RDw9wN_T7xVGSdNdv1Ythz7MggWaE/view"
+  },
+  {
+    label: "2024 (Session 1)",
+    paper: "https://drive.google.com/file/d/1M6UVLkg4mNpqxaQjRCc6JsqkQkQb0Dqd/view",
+    key: "https://drive.google.com/file/d/1tIRoXv8l3qtaQY03wzSXSIvIkf4DUiaX/view"
+  },
+  {
+    label: "2024 (Session 2)",
+    paper: "https://drive.google.com/file/d/13Sqi67RKSG2Ofrz_Bd39ylh6fMqkrIWB/view",
+    key: "https://drive.google.com/file/d/1WAAALB_6XZ7nYxxw4pWh_Dw8f7D2PLa2/view"
+  },
+  {
+    label: "2023",
+    paper: "https://drive.google.com/file/d/1PpNK5Et_5xKO8xLIkz42Wg9kqKGxNzwn/view",
+    key: "https://drive.google.com/file/d/1wKtpKA8O14UMmJRUrQ7Y2PQBWYJ0tDFg/view"
+  },
+  {
+    label: "2022",
+    paper: "https://drive.google.com/file/d/1vxVQ1Ic61FkOiS0lk95w7tt9nmyqUiNJ/view",
+    key: "https://drive.google.com/file/d/1aokfXwZB8c7LHIWXt7O9DgpRSJ2dPOXQ/view"
+  },
+  {
+    label: "2021 (Set 1)",
+    paper: "https://drive.google.com/file/d/17FN0k5v3z4SwWm4FfQji8mlTGX2yFbV-/view",
+    key: "https://drive.google.com/file/d/1u-V4Ar8KtZXbgtG6M8eNXN9MkFJij5Yk/view"
+  },
+  {
+    label: "2021 (Set 2)",
+    paper: "https://drive.google.com/file/d/1xYw6M5_xLalEKf1JiWgzDlD_iwGvmaQj/view",
+    key: "https://drive.google.com/file/d/1fttrQ9L4BAf6Zf8Ew2vVW-C44Wcdbxya/view"
+  }
+];
 
 const rulesContainer = document.getElementById("rules");
 const dailyPlanContainer = document.getElementById("daily-plan");
@@ -116,6 +158,7 @@ const mockNotesInput = document.getElementById("mock-notes");
 const mockAddBtn = document.getElementById("mock-add");
 const mockSummary = document.getElementById("mock-summary");
 const mockList = document.getElementById("mock-list");
+const pyqLinks = document.getElementById("pyq-links");
 
 const scheduleState = {
   conceptQueueIndex: 0,
@@ -580,6 +623,41 @@ function setupMockTracker() {
   });
 }
 
+function renderPYQLinks() {
+  pyqLinks.innerHTML = "";
+  PYQ_LINKS.forEach((item, idx) => {
+    const row = document.createElement("article");
+    row.className = "pyq-row";
+
+    const year = document.createElement("p");
+    year.className = "subject-name";
+    year.textContent = item.label;
+
+    const links = document.createElement("p");
+    const paper = document.createElement("a");
+    paper.href = item.paper;
+    paper.target = "_blank";
+    paper.rel = "noopener noreferrer";
+    paper.textContent = "Question Paper";
+
+    const key = document.createElement("a");
+    key.href = item.key;
+    key.target = "_blank";
+    key.rel = "noopener noreferrer";
+    key.textContent = "Answer Key";
+
+    links.appendChild(paper);
+    links.appendChild(key);
+
+    const solved = makeCheckbox(`pyq-${idx}`, "Solved");
+
+    row.appendChild(year);
+    row.appendChild(links);
+    row.appendChild(solved);
+    pyqLinks.appendChild(row);
+  });
+}
+
 function buildDailyPlan() {
   RULES.forEach((rule, idx) => {
     rulesContainer.appendChild(makeCheckbox(idFor("rule", idx), rule));
@@ -744,5 +822,6 @@ function initPomodoro() {
 }
 
 buildDailyPlan();
+renderPYQLinks();
 setupMockTracker();
 initPomodoro();

@@ -352,6 +352,31 @@ input[type="checkbox"] {
   background: #2f8f4f;
 }
 
+.pyq-links {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.pyq-row {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  padding: 0.6rem;
+  display: grid;
+  grid-template-columns: 130px 1fr 170px;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pyq-row p {
+  margin: 0;
+}
+
+.pyq-row a {
+  color: var(--accent);
+  margin-right: 0.8rem;
+}
+
 .daily-plan {
   display: grid;
   gap: 0.8rem;
@@ -430,6 +455,10 @@ footer {
   }
 
   .mock-row {
+    grid-template-columns: 1fr;
+  }
+
+  .pyq-row {
     grid-template-columns: 1fr;
   }
 }
